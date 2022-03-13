@@ -1,0 +1,21 @@
+$seed
+[1] 4
+
+$ngroups
+[1] 3 4 5
+
+$heteroscedastic
+[1] FALSE
+
+$CC
+[1] "Dunnett" "Tukey"  
+
+$t
+[1] "all"
+
+$N
+NULL
+
+$power
+[1] 0.9
+
