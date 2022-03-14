@@ -9,7 +9,7 @@ Sample size calculations for two (independent) samples are well established and 
 When planning several samples, sample size planning tools based on analysis of variance methods are available. Underlying effect sizes are hard to interpret and
 we therefore employ multiple contrast tests instead. We propose methods to compute the sample size for heteroscedastic designs and purely nonparametric Steel-type tests in a flexible way. This includes any multiple comparisons, e.g., the many-to-one or all-pairs comparison, any variance pattern, and balanced or unbalanced designs.
 
-#### Where users can get help with your project:
+#### Where users can get help:
 Background knowledge on the implemented theory can be found in "Sample size planning for multiple contrast tests".
 
 #### Who maintains and contributes to the project:
