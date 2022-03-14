@@ -7,8 +7,7 @@ This is the R code used for the simulation and application sections in the paper
 #### Why the project is useful:
 Sample size calculations for two (independent) samples are well established and applied in (pre-)clinical research.
 When planning several samples, sample size planning tools based on analysis of variance methods are available. Underlying effect sizes are hard to interpret and
-we therefore employ multiple contrast tests instead. We propose methods to compute the sample size for heteroscedastic designs and purely nonparametric Steel-type tests in a flexible way. This includes
-any multiple comparisons, e.g., the many-to-one or all-pairs comparison, any variance pattern, and balanced or unbalanced designs.
+we therefore employ multiple contrast tests instead. We propose methods to compute the sample size for heteroscedastic designs and purely nonparametric Steel-type tests in a flexible way. This includes any multiple comparisons, e.g., the many-to-one or all-pairs comparison, any variance pattern, and balanced or unbalanced designs.
 
 #### Where users can get help with your project:
 Background knowledge on the implemented theory can be found in "Sample size planning for multiple contrast tests".
