@@ -212,7 +212,7 @@ SingleSimHom_Nfix <- function(mu, sigma, C, N, power_inp, seed){
   a <- length(mu)
   delta <- C%*%mu
   res <- tryCatch({
-    t_mat <- get_t_mat_all(ngroups = length(mu))
+    t_mat <- get_t_mat_all(ngroups = a)
     # find the optimal t given a fixed N - grid search
     res <- apply(t_mat, 1, function(t){
       get_diff_pow_hom(t = t, N = N, delta = delta, sigma = sigma, C = C, power_inp = power_inp)

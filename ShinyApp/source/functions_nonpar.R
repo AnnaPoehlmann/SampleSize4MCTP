@@ -1,3 +1,10 @@
+# get_t_input -------------------------------------------------------------
+# creates the default input vector of allocations
+get_t_input <- function(ngroups){
+  t_vec <- round( c(0.5, rep(0.5/((ngroups-1)), (ngroups-1)) ), 4)
+  return(t_vec)
+}
+
 # dataGen -----------------------------------------------------------------
 # generates data based on a given relative effect and distribution
 dataGen <- function(N,t,p, distribution){
@@ -5,28 +12,22 @@ dataGen <- function(N,t,p, distribution){
   a <- length(t)
   n <- sapply(1:a,function(arg){floor(t[arg]*N)})
   
-  if (distribution == "Normal") {
+  if(distribution == "Normal") {
     x <- rnorm(n[1], 0, 1)
     for (dd in 2:a) {
       x <- c(x, rnorm(n[dd], qnorm(p[dd - 1]) * sqrt(2)))
     }
-  }
-  
-  if (distribution == "LogNor") {
+  }else if(distribution == "LogNor") {
     x <- exp(rnorm(n[1], 0, 1))
     for (dd in 2:a) {
       x <- c(x, exp(rnorm(n[dd], qnorm(p[dd - 1]) * sqrt(2))))
     }
-  }
-  
-  if (distribution == "Exp") {
+  }else if(distribution == "Exp") {
     x <- rexp(n[1], 1)
     for (dd in 2:a) {
       x <- c(x, rexp(n[dd], (1 - p[dd - 1]) / p[dd - 1]))
     }
-  }
-  
-  if (distribution == "Poisson") {
+  }else if(distribution == "Poisson") {
     x <- rpois(n[1], 5)
     for (dd in 2:a) {
       paktA <- p[dd - 1]
@@ -34,9 +35,7 @@ dataGen <- function(N,t,p, distribution){
         EffectPoisson$lambda2[which(abs(EffectPoisson$Effect - paktA) == min(abs(EffectPoisson$Effect - paktA)))]
       x <- c(x, rpois(n[dd], lambda2Akt))
     }
-  }
-  
-  if (distribution == "Binom") {
+  }else if(distribution == "Binom") {
     x <- rbinom(n[1], 10, 0.5)
     for (dd in 2:a) {
       paktA <- p[dd - 1]
@@ -44,9 +43,7 @@ dataGen <- function(N,t,p, distribution){
         EffectBinom$p2[which(abs(EffectBinom$Effect - paktA) == min(abs(EffectBinom$Effect - paktA)))]
       x <- c(x, rbinom(n[dd], 10, p2Akt))
     }
-  }
-  
-  if (distribution == "Beta") {
+  }else if(distribution == "Beta") {
     x <- rbeta(n[1], 2, 2)
     for (dd in 2:a) {
       paktA <- p[dd - 1]
@@ -54,23 +51,16 @@ dataGen <- function(N,t,p, distribution){
         EffectBeta$mu2[which(abs(EffectBeta$Effect - paktA) == min(abs(EffectBeta$Effect - paktA)))]
       x <- c(x, rbeta(n[dd], 2, p2Akt))
     }
-  }
-  
-  if (distribution == "Ordinal") {
-    x <- sample(1:5,
-                n[1],
-                replace = TRUE,
-                prob = c(0.6, 0.4, 0, 0, 0))
+  }else if(distribution == "Ordinal") {
+    x <- sample(1:5, n[1], replace = TRUE, prob = c(0.6, 0.4, 0, 0, 0))
     for (dd in 2:a) {
       paktA <- p[dd - 1]
-      aktzeile <-
-        which(abs(EffectOrdinal$Effect - paktA) == min(abs(EffectOrdinal$Effect - paktA)))
+      aktzeile <- which(abs(EffectOrdinal$Effect - paktA) == min(abs(EffectOrdinal$Effect - paktA)))
       p2Akt <- c(EffectOrdinal[aktzeile, 1:5])
       x <- c(x, sample(1:5, n[dd], replace = TRUE, prob = p2Akt))
     }
   }
-  
-  grp = rep(1, n[1])
+  grp <- rep(1, n[1])
   for (dd in 2:a) {
     grp <- c(grp, rep(dd, n[dd]))
   }
@@ -118,7 +108,7 @@ get_R0 <- function(N,n){
         case <- (1:4)[p]
         rho.st[xx, yy] <- rho.st[yy, xx] <- 1 * cl[[case]]()}}}
   for(xx in 1:nc){
-    i <- vi[xx] # i=1 bei many to one
+    i <- vi[xx] 
     j <- vj[xx]
     sigma0[xx] <- sqrt(N)*sqrt(((n[i]+n[j]+1)/(12*(n[i]+n[j])))*(1/n[i]+1/n[j]))
     sigma012[xx] <- sqrt(N)*sqrt(1/12*(1/n[i]+1/n[j]))
@@ -139,10 +129,7 @@ estimatorstar <- function(formula, data) {
   N <- sum(n)
   tmp1 <- sort(rep(1:a, a))
   tmp2 <- rep(1:a, a)
-  pairRanks <-
-    lapply(1:(a ^ 2), function(arg)
-      rank(c(samples[[tmp1[arg]]],
-             samples[[tmp2[arg]]])))
+  pairRanks <- lapply(1:(a ^ 2), function(arg) rank(c(samples[[tmp1[arg]]],samples[[tmp2[arg]]])))
   p <- sapply(1:(a ^ 2), function(arg) {
     x1 <- samples[[tmp1[arg]]]
     x2 <- samples[[tmp2[arg]]]
@@ -353,7 +340,6 @@ get_pilot_data <- function(distPilot, nPilot, pPilot){
   return(data.frame(yPilot = xPilot, grpPilot = factor(grpPilot)))
 }
 
-
 # get_diff_pow_noether --------------------------------------------------------
 # get the difference between the power and the intended power 
 # Noether (method A)
@@ -370,7 +356,6 @@ get_diff_pow_noether <- function(N, t, p, power_inp = 0.8){
   diff <- 1 - pmvnorm(-crit0, crit0, mean = delta, corr = rho.st)[1] - power_inp
   return(diff) 
 }
-
 
 # get_diff_pow_noether_synthetic -------------------------------------------------------
 # get the difference between the power and the intended power 
@@ -550,5 +535,74 @@ SingleSim_tfix <- function(p, t, power_inp = 0.8, approx, seed, C, datPilot = NU
                     Approximation = approx, t = paste0("(", paste(res$t, collapse = ", "), ")"),
                     N = round(res$N), n = paste0("(", paste(round(res$t * res$N), collapse = ", "), ")"), Power = res$power))
 }
+
+
+# SingleSim_Nfix -------------------------------------------------------------
+# finds the optimal t via grid search and calculates the power based on t for one simulation run, given N
+SingleSim_Nfix <- function(p, N, power_inp = 0.8, approx, seed, C, datPilot = NULL){
+  set.seed(seed)
+  a <- length(p)+1 # Dunnett contrast only 
+  t_mat <- get_t_mat_all(ngroups = a)
+  
+  res <- tryCatch({
+    # find the optimal t given a fixed N
+    # n_i <=8, n_i>=10^4 are excluded
+    if(approx == "A"){ # Noether
+      res <- apply(t_mat, 1, function(t){
+        get_diff_pow_noether(t = t, N = N, p = p, power_inp = power_inp)
+      }) 
+      t_opt <- t_mat[which.min(abs(res)), ]
+    }else{
+      # use the pilot data
+      if(approx == "B"){ # Noether, but uses previous information on ties
+        ests <- estimatorstar(value ~ key, data = gather(datPilot))
+        res <- apply(t_mat, 1, function(t){
+          get_diff_pow_noether_synthetic(t = t, N = N, ests = ests, power_inp = power_inp)
+        }) 
+        t_opt <- t_mat[which.min(abs(res)), ]
+      }else if(approx == "C"){
+        ests <- estimatorstar(value ~ key, data = gather(datPilot))
+        res <- apply(t_mat, 1, function(t){
+          get_diff_pow_synthetic(t = t, N = N, ests = ests, power_inp = power_inp)
+        }) 
+        t_opt <- t_mat[which.min(abs(res)), ]
+      }else if(approx == "D"){
+        ests <- estimatorstar(value ~ key, data = gather(datPilot))
+        nPilot <- sapply(datPilot, function(x) sum(!is.na(x)))
+        n_min <- sort(nPilot)[1:2]
+        res <- apply(t_mat, 1, function(t){
+          get_diff_pow_synthetic(t = t, N = N, ests = ests, Ninit = sum(n_min)-2,
+                                 power_inp = power_inp, type = "multi.t")
+        }) 
+        t_opt <- t_mat[which.min(abs(res)), ]
+      }else{ # approx == "E"
+        # create normal data
+        naux <- 1000
+        xPilot <- rnorm(naux, 0, 1)
+        for (dd in 2:a) {
+          xPilot <- c(xPilot, rnorm(naux, qnorm(p[dd - 1]) * sqrt(2))) 
+        }
+        datPilot <- data.frame(x = xPilot, grp = rep(1:a, each=naux))
+        ests <- estimatorstar(x ~ grp, data = datPilot)
+        estsNormal <- estimatorsNormal(ests$p[2:a]) # estimatorsExp(ests$p[2:a])
+        res <- apply(t_mat, 1, function(t){
+          get_diff_pow_synthetic(t = t, N = N, ests = estsNormal, power_inp = power_inp)
+        }) 
+        t_opt <- t_mat[which.min(abs(res)), ]
+      }
+    } 
+    # calculate the power based on the optimal N
+    get_pow(t = t_opt, N = N, p = p, C = C) # distribution = "Normal"  distribution = "Exp"
+  }, error = function(e){
+    # problem: sometimes uniroot finds multiple local roots 
+    message(paste0("These input parameters lead to a sample size smaller than ", a*8,
+                   " or larger than 1000, which is not recommended."))
+    return(list(t = t, N = NA, power = NA) )
+  })
+  return(data.frame(Contrast = C, p = paste0("(", paste(round(p, digits=4), collapse = ", "),")"),
+                    Approximation = approx, t = paste0("(", paste(res$t, collapse = ", "), ")"),
+                    N = round(res$N), n = paste0("(", paste(round(res$t * res$N), collapse = ", "), ")"), Power = res$power))
+}
+
 
 
